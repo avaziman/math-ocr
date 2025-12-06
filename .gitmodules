@@ -1,0 +1,3 @@
+[submodule "src/math_ocr/models/unimernet_base"]
+	path = src/math_ocr/models/unimernet_base
+	url = https://huggingface.co/wanderkid/unimernet_base
