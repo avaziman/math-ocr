@@ -1,26 +1,25 @@
-from typing import Any, override
+import argparse
+from pathlib import Path
+from typing import override
+
+import numpy as np
+import torch
+import unimernet.tasks as tasks
 from PIL.Image import Image
-from pix2text import LatexOCR
 from pydantic import BaseModel
+from unimernet.common.config import Config
+from unimernet.processors import load_processor
 
 from math_ocr.math_ocr import MathOCR
-import argparse
-import os
-import sys
-import numpy as np
 
-import cv2
-import torch
-from unimernet.common.config import Config
-import unimernet.tasks as tasks
-from unimernet.processors import load_processor
-from pathlib import Path
 
 class MathResult(BaseModel):
     text: str
     confidence: float
 
+
 PACKAGE_ROOT_PATH = Path(__file__).parents[1]
+
 
 class UnimernetMathOCR(MathOCR):
     def __init__(self):
@@ -42,7 +41,7 @@ class ImageProcessor:
             self.device = torch.device("mps")
         else:
             self.device = torch.device("cpu")
-            
+
         self.model, self.vis_processor = self.load_model_and_processor()
 
     def _patch_relative_path(self, config: Config) -> Config:
@@ -52,8 +51,12 @@ class ImageProcessor:
             return str(old_path).replace(MATH_OCR_PREFIX, str(PACKAGE_ROOT_PATH))
 
         config.config.model.pretrained = patch(config.config.model.pretrained)
-        config.config.model.tokenizer_config.path = patch(config.config.model.tokenizer_config.path)
-        config.config.model.model_config.model_name = patch(config.config.model.model_config.model_name)
+        config.config.model.tokenizer_config.path = patch(
+            config.config.model.tokenizer_config.path
+        )
+        config.config.model.model_config.model_name = patch(
+            config.config.model.model_config.model_name
+        )
 
         return config
 
@@ -62,10 +65,13 @@ class ImageProcessor:
 
         cfg = Config(args)
         cfg = self._patch_relative_path(cfg)
-        
+
         task = tasks.setup_task(cfg)
         model = task.build_model(cfg).to(self.device)
-        vis_processor = load_processor('formula_image_eval', cfg.config.datasets.formula_rec_eval.vis_processor.eval)
+        vis_processor = load_processor(
+            "formula_image_eval",
+            cfg.config.datasets.formula_rec_eval.vis_processor.eval,
+        )
 
         return model, vis_processor
 
