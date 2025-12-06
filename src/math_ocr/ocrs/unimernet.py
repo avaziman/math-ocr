@@ -6,17 +6,10 @@ import numpy as np
 import torch
 import unimernet.tasks as tasks
 from PIL.Image import Image
-from pydantic import BaseModel
 from unimernet.common.config import Config
 from unimernet.processors import load_processor
 
-from math_ocr.math_ocr import MathOCR
-
-
-class MathResult(BaseModel):
-    text: str
-    confidence: float
-
+from math_ocr.math_ocr import MathOCR, MathResult
 
 PACKAGE_ROOT_PATH = Path(__file__).parents[1]
 

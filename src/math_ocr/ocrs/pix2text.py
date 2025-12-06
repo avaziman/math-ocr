@@ -1,19 +1,14 @@
 from typing import Any, override
+
 from PIL.Image import Image
 from pix2text import LatexOCR
-from pydantic import BaseModel
 
-from math_ocr.math_ocr import MathOCR
-
-
-class MathResult(BaseModel):
-    text: str
-    confidence: float
+from math_ocr.math_ocr import MathOCR, MathResult
 
 
 class Pix2TextMathOCR(MathOCR):
     def __init__(self):
-        self.latex_ocr = LatexOCR(model='mfr-1.5')
+        self.latex_ocr = LatexOCR(model="mfr-1.5")
 
     @override
     def recognize_math(self, image: Image) -> MathResult:
